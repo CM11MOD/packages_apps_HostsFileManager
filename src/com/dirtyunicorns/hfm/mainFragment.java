@@ -28,6 +28,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.Toast;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Switch;
 
@@ -47,10 +48,9 @@ public class mainFragment extends Fragment{
 		 defHosts = new File("/etc/hosts.og");
 		 altHosts = new File("/etc/hosts.alt");
 		 hosts = new File("/etc/hosts");
-		 
 		 View mainView = inflater.inflate(R.layout.fragment_main, container, false);
 		 
-		 Switch sw = (Switch)mainView.findViewById(R.id.switch1);
+		 final Switch sw = (Switch)mainView.findViewById(R.id.switch1);
 		 if (settings != null) {
 			 if (settings.getString("default", null) == "true")
 			 {
@@ -73,37 +73,42 @@ public class mainFragment extends Fragment{
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				try {
 					RunAsRoot("mount -o remount, rw /system");
+					if (isChecked){
+						 if (hosts.exists() && defHosts.exists()) {
+							 try {
+								 hosts.delete();
+								 copyFiles(defHosts);
+								 settings.edit().putString("default", "true").commit();
+							 }
+							 catch (IOException e) {
+								 e.printStackTrace();
+							 }
+							 
+						 } else {
+							 Toast.makeText(getActivity(), "You do not have the alternate hosts file", Toast.LENGTH_LONG).show();
+							 sw.setChecked(false);
+						 }
+					 }
+					else {
+						if (hosts.exists() && altHosts.exists()) {
+							try {
+								 hosts.delete();
+								 copyFiles(altHosts);
+								 settings.edit().putString("default", "false").commit();
+							 }
+							 catch (IOException e) {
+								 e.printStackTrace();
+							 }
+						} else {
+							Toast.makeText(getActivity(), "You do not have the alternate hosts file", Toast.LENGTH_LONG).show();
+							sw.setChecked(true);
+						}
+					}
 				}
 				catch (IOException e) {
 					e.printStackTrace();
+					Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
 				}
-				
-				if (isChecked){
-					 if (hosts.exists() && defHosts.exists()) {
-						 try {
-							 hosts.delete();
-							 copyFiles(defHosts);
-							 settings.edit().putString("default", "true").commit();
-						 }
-						 catch (IOException e) {
-							 e.printStackTrace();
-						 }
-						 
-					 }
-				 }
-				else {
-					if (hosts.exists() && altHosts.exists()) {
-						try {
-							 hosts.delete();
-							 copyFiles(altHosts);
-							 settings.edit().putString("default", "false").commit();
-						 }
-						 catch (IOException e) {
-							 e.printStackTrace();
-						 }
-					}
-				}
-				
 			}
 		 });
 		 
