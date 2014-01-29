@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Host 文件管理員</string>
+    <string name="action_settings">設定</string>
+    <string name="title_section1">Hosts 一鍵切換</string>
+    <string name="title_section2">自定義 Hosts 文件</string>
+    <string name="title_section3">Section 3</string>
+    <string name="custom_host_file">自定義 Hosts 文件</string>
+    <string name="hosts_file_location">Hosts 文件位置</string>
+    <string name="find">搜尋</string>
+    <string name="switch1">開關1</string>
+    <string name="switch2">開關2</string>
+    <string name="default_host_file">默認 Hosts 文件</string>
+
+</resources>
